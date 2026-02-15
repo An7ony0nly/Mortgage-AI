@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 import numpy as np
 
-# --- CONFIGURAZIONE PAGINA ---
+# CONFIGURAZIONE PAGINA
 st.set_page_config(
     page_title="Credit Scoring System",
     page_icon="💼",
@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- CSS PERSONALIZZATO (STILE PROFESSIONAL) ---
+
 st.markdown("""
     <style>
     /* Sfondo generale */
@@ -62,7 +62,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 
-# --- CARICAMENTO ASSET ---
+# CARICAMENTO ASSET
 @st.cache_resource
 def load_assets():
     model_app = joblib.load('modello_mutui.pkl')
@@ -79,11 +79,11 @@ except:
     st.error("Errore Critico: File del modello non trovati. Eseguire lo script di training.")
     st.stop()
 
-# --- HEADER ---
+# HEADER
 st.title("Credit Scoring & Matching System")
 st.markdown("---")
 
-# --- SIDEBAR (INPUT FORMALI) ---
+# SIDEBAR
 with st.sidebar:
     st.markdown("### 📋 Parametri Pratica")
 
@@ -106,7 +106,7 @@ with st.sidebar:
         istruzione = st.selectbox("Livello Istruzione", ["Laurea", "Diploma o inferiore"])
         lavoro = st.selectbox("Posizione Lavorativa", ["Dipendente", "Autonomo"])
 
-# --- PRE-ELABORAZIONE ---
+# PRE-ELABORAZIONE
 rata = (importo / (durata * 12)) * 1.05
 ratio = (rata * 12) / reddito if reddito > 0 else 0
 score_norm = (score_crif - 300) / 600
@@ -136,7 +136,7 @@ df_in = pd.DataFrame([input_dict])
 df_in = df_in.reindex(columns=model_columns, fill_value=0)
 X_scaled = scaler.transform(df_in)
 
-# --- DASHBOARD PRINCIPALE ---
+# DASHBOARD PRINCIPALE
 col1, col2, col3 = st.columns(3)
 col1.metric("Rapporto Rata/Reddito", f"{ratio:.1%}", delta_color="inverse")
 col2.metric("Rating Cliente", f"{score_crif}/900")
@@ -144,10 +144,10 @@ col3.metric("Rata Mensile Stimata", f"€ {rata:.2f}")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# --- ESECUZIONE ---
+# ESECUZIONE
 if st.button("CALCOLA MERITO CREDITIZIO"):
 
-    # Spinner professionale invece dei palloncini
+
     with st.spinner('Elaborazione algoritmi di rischio in corso...'):
         pred_app = model_app.predict(X_scaled)[0]
         prob_app = model_app.predict_proba(X_scaled)[0][1]
@@ -160,7 +160,7 @@ if st.button("CALCOLA MERITO CREDITIZIO"):
         bank_name = bank_encoder.inverse_transform([pred_bank_idx])[0]
         bank_clean = bank_name.replace('_', ' ')
 
-        # HTML personalizzato per box verde elegante
+
         st.markdown(f"""
         <div class="result-box-success">
             <h3>✅ ESITO: POSITIVO</h3>
@@ -173,7 +173,7 @@ if st.button("CALCOLA MERITO CREDITIZIO"):
         st.info(f"In base al profilo storico, l'istituto con maggiore affinità è: **{bank_clean}**")
 
     else:
-        # HTML personalizzato per box rosso elegante
+
         st.markdown(f"""
         <div class="result-box-fail">
             <h3>⚠️ ESITO: NEGATIVO</h3>
